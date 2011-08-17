@@ -36,6 +36,8 @@ This create a list of links from the root page to the current node.
 ## Example ##
 
 Your template might look like the following:
+
+<code>
       !!! 5
       %html{ :lang => "en" }
         %head
@@ -51,3 +53,4 @@ Your template might look like the following:
             %nav{:id=>'nav'}=children_nav
           #content
             = yield
+</code>

@@ -12,7 +12,7 @@ This gem ads simple helpers to [Middleman](http://middlemanapp.com) static site 
 
 3. include it in your config.rb file
 
-      require middleman-navigation'
+      require middleman-navigation
       activate :navigation
 
 # Usage

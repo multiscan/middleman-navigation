@@ -4,16 +4,17 @@ This gem ads simple helpers to [Middleman](http://middlemanapp.com) static site 
 
 1. add the gem in your Gemfile:
 
-      gem "middleman-navigation"
+        gem "middleman-navigation"
 
 2. run bundler
 
-      bundle install
+        bundle install
 
 3. include it in your config.rb file
 
-      require middleman-navigation
-      activate :navigation
+        require middleman-navigation
+
+        activate :navigation
 
 # Usage
   

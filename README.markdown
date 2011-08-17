@@ -3,10 +3,15 @@ This gem ads simple helpers to [Middleman](http://middlemanapp.com) static site 
 # Installation
 
 1. add the gem in your Gemfile:
+
     gem "middleman-navigation"
+
 2. run bundler
+
     bundle install
+
 3. include it in your config.rb file
+
     require middleman-navigation'
     activate :navigation
 
@@ -19,6 +24,7 @@ The gem adds two helper functions to middleman: children_nav and trail_nav
 Creates a list of links to the pages that are direct descendant of the current one.
 The behaviour can be changed by adding a *weight* and/or a *nonav* option in 
 the page front matter. Example:
+
       ---
       nonav: true
       weight: 80
@@ -37,7 +43,6 @@ This create a list of links from the root page to the current node.
 
 Your template might look like the following:
 
-<code>
       !!! 5
       %html{ :lang => "en" }
         %head
@@ -53,4 +58,3 @@ Your template might look like the following:
             %nav{:id=>'nav'}=children_nav
           #content
             = yield
-</code>

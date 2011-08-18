@@ -1,10 +1,11 @@
-This gem ads simple helpers to [Middleman](http://middlemanapp.com) static site generator.
+This gem ads simple helpers to [Middleman](http://middlemanapp.com) static site generator 
+to add navigation menus and breadcrumbs.
 
 # Installation
 
 1. add the gem in your Gemfile:
 
-        gem "middleman-navigation"
+        gem "middleman-navigation", :git=>"git://github.com/multiscan/middleman-navigation.git"
 
 2. run bundler
 
@@ -59,3 +60,10 @@ Your template might look like the following:
             %nav{:id=>'nav'}=children_nav
           #content
             = yield
+
+## Problems ##
+
+* Current version only works with haml source files.
+* No nested navigation yet 
+* Not yet compatible with :directory_indexes feature
+

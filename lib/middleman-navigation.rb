@@ -90,7 +90,7 @@ module Middleman::Features::Navigation
       return @banner_url unless @banner_url.nil?
       p= "/" + @@settings.images_dir + "/banner" + @path.gsub(/\.html$/, ".jpg")
       unless File.exists?(@@settings.views + p)
-        p = parent ? parent.banner_path : "/" + @@settings.images_dir + "/banner/default.jpg"
+        p = parent ? parent.banner_url : "/" + @@settings.images_dir + "/banner/default.jpg"
       end
       @banner_url = p
       return @banner_url

@@ -23,7 +23,8 @@ The gem adds two helper functions to middleman: children_nav and trail_nav
 
 ## children_nav
 
-Creates a list of links to the pages that are direct descendant of the current one.
+Creates a list of links to the pages that are direct descendant of the current one. All source files with an underscore as first or last character of the file name and directories beginning with underscore, are excluded from the list.
+
 The behaviour can be changed by adding a *weight* and/or a *nonav* option in 
 the page front matter. Example:
 
@@ -34,8 +35,7 @@ the page front matter. Example:
       Here you have the actual page source
 
 The *nonav* option inhibits the creation of the menu for the current page while
-*weight* is used to alter the order of the links in the navigation menu. The higher
-the weight, the earlier the link.
+*weight* is used to alter the order of the links in the navigation menu. The higher the weight, the earlier the link.
 
 ## trail_nav
 
@@ -61,7 +61,7 @@ Your template might look like the following:
           #content
             = yield
 
-## Problems ##
+# Problems
 
 * Current version only works with haml source files.
 * No nested navigation yet 

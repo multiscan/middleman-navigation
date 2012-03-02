@@ -90,7 +90,8 @@ module Middleman::Features::Navigation
 
     def == (other)
       other_path = other.class==Page ? other.path : sanitize_path(other)
-      other_path == @path
+      path_test = @path.sub(/\.html$/, '')
+      other_path =~ Regexp.new(path_test)
     end
 
 

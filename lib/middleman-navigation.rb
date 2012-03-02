@@ -10,12 +10,16 @@ module Middleman::Features::Navigation
   module HelpersMethods
     # create a list item containing the link to a given page. 
     # If page is the current one, only a span is Class "selected" is added if the page is the current one.
-    def menu_item(page,label=nil)
+    def menu_item(page,label=nil, options)
       mylabel = label || page.label
+      link = link_to(mylabel, page.url)
+      _options = {:selected => {:class => "active"}}
+      options = _options.merge(options)
+
       if page==request.path
-        return "<li class='selected'><span>#{mylabel}</span></li>"
+        return content_tag :li, link, :class => options[:selected][:class]
       else
-        return "<li>"+link_to(mylabel, page.url)+"</li>"
+        return content_tag :li, link
       end
     end
 
@@ -28,17 +32,17 @@ module Middleman::Features::Navigation
         res << sep
         res << menu_item(p)
       end
-      return "<ul>" + res.reverse.join(" ") + "</ul>"
+      return "<ul>" + res.join(" ") + "</ul>"
     end
     
     # create an <ul> list with links to all the childrens of the current page
-    def children_nav
+    def children_nav(menu, options={})
       p = Page.new(request.path)
-      return nil unless p.index?
       return nil if p.nonav?
-      c = p.childrens.delete_if { |cc| cc.hidden? }
-      return nil if c.empty?    
-      return "<ul>" + c.sort{ |a,b| b.weight <=> a.weight }.map{|cc| menu_item(cc)}.join("\n") + "</ul>"
+      c = p.childrens.delete_if { |cc| cc.hidden? }.delete_if{ |m| !m.from_menu?(menu) } 
+      return nil if c.empty?
+      menu_content = c.sort{ |a,b| b.weight <=> a.weight }.map{|cc| menu_item(cc, options)}.join("\n")
+      return content_tag :ul, menu_content, options
     end
     
     # image tag for the image having the same path as the current page except that it is on /images/banner
@@ -59,7 +63,7 @@ module Middleman::Features::Navigation
   # weight : INT     higher weight means the page comes earlier in the menu
   # ---------------------------------------------------------------------------
   class Page
-    attr_reader :debug, :label, :path
+    attr_reader :debug, :path
     def self.set_app(a)
       @@app=a
       @@settings=a.settings
@@ -72,7 +76,6 @@ module Middleman::Features::Navigation
       @is_index = ! %r{#{@@settings.index_file}$}.match(@path).nil?
       @is_home =  @path=="/" || @path=="/#{@@settings.index_file}"
       @is_hidden = File.basename(@path, ".html")[-1]=="_" || File.basename(@path, ".html")[0]=="_" || File.basename(File.dirname(@path))[0]=="_"
-      @label = @is_home ? "HOME" : File.basename(@is_index ? File.dirname(path) : @path, ".html").gsub("_", " ").upcase
       
       @banner_url = nil
       @childrens = nil
@@ -102,11 +105,12 @@ module Middleman::Features::Navigation
 
     # return the list of childrent Page objects or nil if this is a leaf node (!@is_index)
     def childrens
-      return nil unless @is_index
+      # return nil unless @is_index
       return @childrens unless @childrens.nil?
       srcdir=File.dirname(@srcfile)
-      srcfiles=Dir.glob("#{srcdir}/*.haml") + Dir.glob("#{srcdir}/*/#{@@settings.index_file}.haml")
-      paths=srcfiles.delete_if{|f| f==@srcfile}.map{|f| path_from_src(f) }
+      srcfiles=Dir.glob("#{srcdir}/*.html.haml") + Dir.glob("#{srcdir}/*/#{@@settings.index_file}.html.haml")
+      # paths=srcfiles.delete_if{|f| f==@srcfile}.map{|f| path_from_src(f) }
+      paths=srcfiles.map{|f| path_from_src(f) }
       @childrens = paths.map { |p| Page.new(p) }
       return @childrens
     end
@@ -119,6 +123,11 @@ module Middleman::Features::Navigation
     # nicer getter
     def hidden?
       @is_hidden
+    end
+
+    def from_menu?(menu)
+      set_metadata unless @metadata
+      return @metadata['menu_scope'] == menu
     end
 
     # nicer getter
@@ -140,13 +149,17 @@ module Middleman::Features::Navigation
       @parent = Page.new(parent_path)
       return @parent
     end
-    # def tags
-    #   set_metadata unless @metadata
-    #   return @metadata['tags'] || []
-    # end
+
+    #return the label
+    def label
+      set_metadata unless @metadata
+      _label = @is_home ? "HOME" : File.basename(@is_index ? File.dirname(path) : @path, ".html").gsub("_", " ").upcase
+      @metadata['menu_title'] || _label
+    end
+
     def weight
       set_metadata unless @metadata
-      return @metadata['weight'] || 0
+      return @metadata['weight'] || 9999
     end
 
    private
@@ -159,7 +172,7 @@ module Middleman::Features::Navigation
     # TODO: work with relative paths instead (possibly checking user config)
     def sanitize_path(path)
       p="/" + path
-      p << "/" + settings.index_file unless path.match(%r{\.html$})
+      p << "/" + @@settings.index_file unless path.match(%r{\.html$})
       return p.gsub(%r{//*}, "/")
     end
 

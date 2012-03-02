@@ -46,7 +46,7 @@ module Middleman::Features::Navigation
       return nil if p.nonav?
       c = p.childrens.delete_if { |cc| cc.hidden? }.delete_if{ |m| !m.from_menu?(menu) } 
       return nil if c.empty?
-      menu_content = c.sort{ |a,b| b.weight <=> a.weight }.map{|cc| menu_item(cc, options)}.join("\n")
+      menu_content = c.sort{ |a,b| b.weight <=> a.weight }.map{|cc| menu_item(cc, options)}.reverse.join("\n")
       return content_tag :ul, menu_content, options
     end
     
@@ -81,10 +81,11 @@ module Middleman::Features::Navigation
       @is_index = ! %r{#{@@settings.index_file}$}.match(@path).nil?
       @is_home =  @path=="/" || @path=="/#{@@settings.index_file}"
       @is_hidden = File.basename(@path, ".html")[-1]=="_" || File.basename(@path, ".html")[0]=="_" || File.basename(File.dirname(@path))[0]=="_"
-      
+      @source_dir = File.join(@@settings.root, 'source');
+
       @banner_url = nil
       @childrens = nil
-      @metadata = nil      
+      @metadata = nil
     end
 
     def == (other)
@@ -112,9 +113,8 @@ module Middleman::Features::Navigation
     def childrens
       # return nil unless @is_index
       return @childrens unless @childrens.nil?
-      srcdir=File.dirname(@srcfile)
-      srcfiles=Dir.glob("#{srcdir}/*.html.haml") + Dir.glob("#{srcdir}/*/#{@@settings.index_file}.html.haml")
-      # paths=srcfiles.delete_if{|f| f==@srcfile}.map{|f| path_from_src(f) }
+
+      srcfiles=Dir.glob("#{@source_dir}/*.html.haml")
       paths=srcfiles.map{|f| path_from_src(f) }
       @childrens = paths.map { |p| Page.new(p) }
       return @childrens

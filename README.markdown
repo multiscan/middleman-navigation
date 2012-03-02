@@ -25,17 +25,28 @@ The gem adds two helper functions to middleman: children_nav and trail_nav
 
 Creates a list of links to the pages that are direct descendant of the current one. All source files with an underscore as first or last character of the file name and directories beginning with underscore, are excluded from the list.
 
-The behaviour can be changed by adding a *weight* and/or a *nonav* option in 
-the page front matter. Example:
+Example:
+    =children_nav 'main'
+
+
+### Page options 
+The behaviour of children_nav can be changed by adding a metadata at head of source files.
+
+Example:
 
       ---
       nonav: true
       weight: 80
+      menu_title: Custom Title
+      menu_scope: main
       ---
       Here you have the actual page source
 
-The *nonav* option inhibits the creation of the menu for the current page while
-*weight* is used to alter the order of the links in the navigation menu. The higher the weight, the earlier the link.
+
+*nonav*: option inhibits the creation of the menu for the current page
+*weight*: is used to alter the order of the links in the navigation menu
+*menu_title*: is used to set a custom title to menu, default to file name.
+*menu_scope*: the name of menu that will handle this link
 
 ## trail_nav
 

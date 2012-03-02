@@ -11,10 +11,15 @@ module Middleman::Features::Navigation
     # create a list item containing the link to a given page. 
     # If page is the current one, only a span is Class "selected" is added if the page is the current one.
     def menu_item(page,label=nil, options)
+      _options = {
+        :selected => {:class => "active"},
+        :wrapper => "%s"
+      }
+      options = _options.merge(options)
+      
       mylabel = label || page.label
       link = link_to(mylabel, page.url)
-      _options = {:selected => {:class => "active"}}
-      options = _options.merge(options)
+      link = options[:wrapper] % link
 
       if page==request.path
         return content_tag :li, link, :class => options[:selected][:class]

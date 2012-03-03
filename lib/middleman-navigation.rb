@@ -21,10 +21,10 @@ module Middleman::Features::Navigation
       link = link_to(mylabel, page.url)
       link = options[:wrapper] % link
       if page==request.path
-        options[:li_class] = ' ' + options[:selected][:class]
+        options[:li_class] += ' ' + options[:selected][:class]
       end
 
-      return content_tag :li, link, :class => options[:li_class]
+      return content_tag :li, link, :class => options[:li_class].strip
     end
 
     # # create an <ul> list with links to all the parent pages down to the root
@@ -50,11 +50,11 @@ module Middleman::Features::Navigation
         i += 1
         item_class = (i == 1) ? 'first' : ''
         item_class += ' last' if c.length == i
-        item_class.strip!
         options[:li_class] = item_class
         menu_item(cc, options)
       }.join("\n")
-
+      options.delete(:li_class)
+      options.delete(:wrapper)
       return content_tag :ul, menu_content, options
     end
     

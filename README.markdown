@@ -22,7 +22,7 @@ The gem add a menu helper to Middleman.
 
 ## menu
 
-Automatic generate menu look for files at project root folder.
+Automatic generate menu reading pages at project root folder.
 
 Example:
     =menu 'main' [, [options]]

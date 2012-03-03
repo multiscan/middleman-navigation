@@ -20,33 +20,41 @@ module Middleman::Features::Navigation
       mylabel = label || page.label
       link = link_to(mylabel, page.url)
       link = options[:wrapper] % link
-
       if page==request.path
-        return content_tag :li, link, :class => options[:selected][:class]
-      else
-        return content_tag :li, link
+        options[:li_class] = ' ' + options[:selected][:class]
       end
+
+      return content_tag :li, link, :class => options[:li_class]
     end
 
-    # create an <ul> list with links to all the parent pages down to the root
-    def trail_nav(sep="<li class='separator'><span>&gt;</span></li>")
-      p = Page.new(request.path)
-      res=Array.new 
-      res << menu_item(p)
-      while p=p.parent
-        res << sep
-        res << menu_item(p)
-      end
-      return "<ul>" + res.join(" ") + "</ul>"
-    end
+    # # create an <ul> list with links to all the parent pages down to the root
+    # def trail_nav(sep="<li class='separator'><span>&gt;</span></li>")
+    #   p = Page.new(request.path)
+    #   res=Array.new 
+    #   res << menu_item(p)
+    #   while p=p.parent
+    #     res << sep
+    #     res << menu_item(p)
+    #   end
+    #   return "<ul>" + res.join(" ") + "</ul>"
+    # end
     
     # create an <ul> list with links to all the childrens of the current page
-    def children_nav(menu, options={})
+    def menu(menu, options={})
       p = Page.new(request.path)
       return nil if p.nonav?
       c = p.childrens.delete_if { |cc| cc.hidden? }.delete_if{ |m| !m.from_menu?(menu) } 
       return nil if c.empty?
-      menu_content = c.sort{ |a,b| b.weight <=> a.weight }.map{|cc| menu_item(cc, options)}.reverse.join("\n")
+      i = 0;
+      menu_content = c.sort{ |a,b| b.weight <=> a.weight }.reverse.map{ |cc|
+        i += 1
+        item_class = (i == 1) ? 'first' : ''
+        item_class += ' last' if c.length == i
+        item_class.strip!
+        options[:li_class] = item_class
+        menu_item(cc, options)
+      }.join("\n")
+
       return content_tag :ul, menu_content, options
     end
     
@@ -95,16 +103,16 @@ module Middleman::Features::Navigation
     end
 
 
-    # return the address to the image with the same path as this page from images/banner/
-    def banner_url
-      return @banner_url unless @banner_url.nil?
-      p= "/" + @@settings.images_dir + "/banner" + @path.gsub(/\.html$/, ".jpg")
-      unless File.exists?(@@settings.views + p)
-        p = parent ? parent.banner_url : "/" + @@settings.images_dir + "/banner/default.jpg"
-      end
-      @banner_url = p
-      return @banner_url
-    end
+    # # return the address to the image with the same path as this page from images/banner/
+    # def banner_url
+    #   return @banner_url unless @banner_url.nil?
+    #   p= "/" + @@settings.images_dir + "/banner" + @path.gsub(/\.html$/, ".jpg")
+    #   unless File.exists?(@@settings.views + p)
+    #     p = parent ? parent.banner_url : "/" + @@settings.images_dir + "/banner/default.jpg"
+    #   end
+    #   @banner_url = p
+    #   return @banner_url
+    # end
     
     def url
       return @path

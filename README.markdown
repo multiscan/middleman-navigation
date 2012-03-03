@@ -18,7 +18,6 @@ to add navigation menus and breadcrumbs.
         activate :navigation
 
 # Usage
-
 The gem add a menu helper to Middleman.
 
 ## menu

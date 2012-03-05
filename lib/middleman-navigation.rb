@@ -59,7 +59,7 @@ module Middleman::Features::Navigation
   # weight : INT     higher weight means the page comes earlier in the menu
   # ---------------------------------------------------------------------------
   class Page
-    attr_reader :debug, :label, :path
+    attr_reader :debug, :path
     def self.set_app(a)
       @@app=a
       @@settings=a.settings
@@ -132,6 +132,11 @@ module Middleman::Features::Navigation
       return @metadata['nonav'] || false
     end
 
+    def label
+      set_metadata unless @metadata
+      return @metadata['label'] || @label
+    end
+    
     # return the parent Page object or nil if this is the root node (@is_home)
     def parent
       return nil if @is_home

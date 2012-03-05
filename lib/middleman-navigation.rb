@@ -119,7 +119,7 @@ module Middleman::Features::Navigation
     # nicer getter
     def hidden?
       set_metadata unless @metadata
-      @metadata['hidden'] || @file_hidden
+      @metadata['hidden'] || @filename_hidden
     end
 
     # nicer getter

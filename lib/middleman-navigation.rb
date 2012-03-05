@@ -72,7 +72,7 @@ module Middleman::Features::Navigation
       @is_index = ! %r{#{@@settings.index_file}$}.match(@path).nil?
       @is_home =  @path=="/" || @path=="/#{@@settings.index_file}"
       @filename_hidden = File.basename(@path, ".html")[-1]=="_" || File.basename(@path, ".html")[0]=="_" || File.basename(File.dirname(@path))[0]=="_"
-      @label = @is_home ? "HOME" : File.basename(@is_index ? File.dirname(path) : @path, ".html").gsub("_", " ").upcase
+      @label = @is_home ? "home" : File.basename(@is_index ? File.dirname(path) : @path, ".html").gsub("_", " ")
       
       @banner_url = nil
       @childrens = nil

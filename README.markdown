@@ -56,8 +56,9 @@ Example:
 
 # Middleman 3
 Most of the code of this plugin is essentially already included in version 3 of the grat middleman.
-A quick hack to replace its funcionality is to add the following to your config.rb file:
+A quick hack to replace its funcionality is to add the following helpers to your config.rb file:
 
+    helpers do
       class Middleman::Sitemap::Page
         def banner_url
           p= "/" + app.images_dir + "/banner/" + self.path.gsub(/\.html$/, ".jpg")
